@@ -61,6 +61,9 @@ const handleCaptcha = (page) => async (response) => {
     await revote(page);
   }
 
+  // TODO: Treat the errors
+  // if(hookUrl.starts)globoesporte.globo.com
+
   if (hookUrl.startsWith(links.captchaURL)) {
     const res = await response.json();
     const { symbol: icon, image } = res.data;
@@ -85,7 +88,7 @@ const handleCaptcha = (page) => async (response) => {
 
 
 (async () => {
-    if(!credentials.username) {
+    if(!credentials.username || !credentials.password) {
       console.log('You need to export the env variables with your username and password.')
       process.exit()
     }

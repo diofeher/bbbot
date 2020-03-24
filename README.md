@@ -20,7 +20,7 @@ Esse bot utiliza o Puppeteer para interagir com a página e o PIL e OpenCV para 
 Depois de instalar essas duas dependências, rode os seguinte comandos:
 
 ```
-pip3 install -r requirements
+pip3 install -r requirements.txt
 npm install
 ```
 

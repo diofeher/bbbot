@@ -10,6 +10,6 @@
   "author": "diofeher",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.6.1"
+    "puppeteer": "^2.1.1"
   }
 }
