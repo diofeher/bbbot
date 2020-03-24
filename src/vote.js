@@ -7,7 +7,9 @@ const childProcess = require('child_process');
 
 
 const login = async (page) => {
-  page.goto(links.globoLoginURL);
+  page.goto(links.globoLoginURL, {
+    waitUntil: "networkidle2"
+  });
 
   await page.waitForSelector('#login');
 
@@ -20,7 +22,9 @@ const login = async (page) => {
 
 
 const goToVotePage = async (page) => {
-  await page.goto(links.voteURL);
+  await page.goto(links.voteURL, {
+    waitUntil: "networkidle2"
+  });
   await removeSponsor(page);
   voteParticipant(page);
 }
@@ -83,6 +87,11 @@ const handleCaptcha = (page) => async (response) => {
 
 
 (async () => {
+    if(!credentials.username) {
+      console.log('You need to export the env variables with your username and password.')
+      process.exit()
+    }
+
     const browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
         headless: false,

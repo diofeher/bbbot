@@ -11,14 +11,16 @@ PATH_EXISTENT = './images_individual/'
 
 
 def calculate_diff(img1, img2):
-    sift = cv2.xfeatures2d.SIFT_create()
+    matcher = cv2.xfeatures2d.SIFT_create(nfeatures=100)
+    # surf = cv2.xfeatures2d.SURF_create()
+    # matcher = cv2.ORB_create()
     # find the keypoints and descriptors with SIFT
-    kp1, des1 = sift.detectAndCompute(img1,None)
-    kp2, des2 = sift.detectAndCompute(img2,None)
+    kp1, des1 = matcher.detectAndCompute(img1,None)
+    kp2, des2 = matcher.detectAndCompute(img2,None)
 
     # BFMatcher with default params
     bf = cv2.BFMatcher()
-    matches = bf.match(des1,des2)
+    matches = bf.match(des1, des2)
 
     matches = sorted(matches, key=lambda val: val.distance)
     score = sum([i.distance for i in matches])

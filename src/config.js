@@ -38,6 +38,4 @@ const credentials = {
   password: process.env.GLOBO_PASSWORD,
 };
 
-
-
 module.exports = { config, credentials, links, xpaths };
