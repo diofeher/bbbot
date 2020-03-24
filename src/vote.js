@@ -80,8 +80,6 @@ const handleCaptcha = (page) => async (response) => {
 
     await page.waitFor(config.waitClick);
     await clickOnElement(page, captchaElem, x, config.captchaCenter);
-    await page.waitFor(config.waitClick);
-    await revote(page);
   }
 }
 
