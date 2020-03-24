@@ -44,43 +44,40 @@ const voteParticipant = async (page) => {
 let voteCounter = 0;
 
 const handleCaptcha = (page) => async (response) => {
-  try {
-    const hookUrl = response.url();
-    const statusCode = response.status();
-    const request = response.request();
+  const hookUrl = response.url();
+  const statusCode = response.status();
+  const request = response.request();
 
-    if (hookUrl.startsWith(links.challengeAcceptedURL) &&
-      parseInt(statusCode) === 200 &&
-      request.method() === "POST"
-    ) {
-      voteCounter++;
-      console.log("Votos computados: " + voteCounter);
-      await revote(page);
+  if (hookUrl.startsWith(links.challengeAcceptedURL) &&
+    parseInt(statusCode) === 200 &&
+    request.method() === "POST"
+  ) {
+    voteCounter++;
+    console.log("Votos computados: " + voteCounter);
+    await revote(page);
+  }
+
+  if (hookUrl.startsWith(links.captchaURL)) {
+    const res = await response.json();
+    const { symbol: icon, image } = res.data;
+    fs.writeFileSync(`images/${icon}.png`, image, "base64");
+    const position = String(childProcess.execSync(`python3 compare_images.py "${icon}"`)).trim();
+    const captchaElem = await page.$(xpaths.captcha);
+
+    console.log(`Get captcha: ${icon} | Position: ${position}`);
+
+    if(position === "None") {
+      console.log('Doesn\'t recognize image, reloading the captcha.');
+      reloadCaptcha(page);
+      return;
     }
 
-    if (hookUrl.startsWith(links.captchaURL)) {
-      const res = await response.json();
-      const { symbol: icon, image } = res.data;
-      fs.writeFileSync(`images/${icon}.png`, image, "base64");
-      const position = String(childProcess.execSync(`python3 compare_images.py "${icon}"`)).trim();
-      const captchaElem = await page.$(xpaths.captcha);
+    const x = config.captchaIndividualSize * position + config.captchaCenter;
 
-      console.log(`Get captcha: ${icon} | Position: ${position}`);
-
-      if(position === "None") {
-        console.log('Doesn\'t recognize image, reloading the captcha.');
-        reloadCaptcha(page);
-        return;
-      }
-
-      const x = config.captchaIndividualSize * position + config.captchaCenter;
-
-      await clickOnElement(page, captchaElem, x, config.captchaCenter);
-      await page.waitFor(config.waitClick);
-      await revote(page);
-    }
-  } catch {
-
+    await page.waitFor(config.waitClick);
+    await clickOnElement(page, captchaElem, x, config.captchaCenter);
+    await page.waitFor(config.waitClick);
+    await revote(page);
   }
 }
 
