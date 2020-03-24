@@ -58,6 +58,7 @@ const handleCaptcha = (page) => async (response) => {
     console.log("Votos computados: " + voteCounter);
     await revote(page);
   }
+
   if (hookUrl.startsWith(links.captchaURL)) {
     let res = await response.json();
     let { symbol: icon, image } = res.data;
@@ -74,7 +75,7 @@ const handleCaptcha = (page) => async (response) => {
       return;
     }
 
-    const x = config.captchaCenter * position + config.captchaCenter;
+    const x = config.captchaIndividualSize * position + config.captchaCenter;
     setTimeout(async () => {
       await clickOnElement(page, captchaElem, x, config.captchaCenter);
       try {
