@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 from PIL import Image
 from utils import list_individual_images, break_captcha
-from skimage.metrics import structural_similarity as ssim
 import sys
 
 
