@@ -22,6 +22,8 @@ const xpaths = {
   captcha: 'img[class="gc__3_EfD"]',
   voteAgain: '[class="_3viry_vXUhTU4nSnvn2iB_"]',
   reloadCaptcha: 'button[class="gc__1JSqe"]',
+  captchaTextClassName: '.gc__2e8f-',
+  captchaErrorMsg: '.gc__2b3Aq',
   user: USER_XPATH,
   buttonCaptcha:
   `${USER_XPATH}/div[2]/div/div/div[3]/button`,
@@ -33,9 +35,20 @@ const xpaths = {
   `${BASE_XPATH}/div[3]/div/div/div[1]/div[1]/div[1]/span[1]`,
 };
 
+const messages = {
+  wrongCaptcha: 'Símbolo errado, tente de novo',
+  expiredCaptcha: 'O captcha anterior expirou.',
+}
+
 const credentials = {
   username: process.env.GLOBO_USERNAME,
   password: process.env.GLOBO_PASSWORD,
 };
 
-module.exports = { config, credentials, links, xpaths };
+module.exports = {
+  config,
+  credentials,
+  links,
+  messages,
+  xpaths
+};

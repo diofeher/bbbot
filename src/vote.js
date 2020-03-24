@@ -1,8 +1,20 @@
 const puppeteer = require('puppeteer');
-const { links, credentials, xpaths, config } = require("./config");
+const {
+  config,
+  links,
+  credentials,
+  xpaths,
+  messages,
+} = require("./config");
 const { installMouseHelper } = require("./mouseHelper");
 const fs = require("fs");
-const { clickOnElement, scrollToTop, revote, removeSponsor } = require('./utils.js');
+const {
+  clickOnElement,
+  getTextFromSelector,
+  scrollToTop,
+  revote,
+  removeSponsor
+} = require('./utils.js');
 const childProcess = require('child_process');
 
 
@@ -37,12 +49,33 @@ const reloadCaptcha = async (page) => {
 
 
 const voteParticipant = async (page) => {
-  console.log('Vote participant.');
   scrollToTop(page);
   const participantes = await page.$$(xpaths.participants);
 
   await page.waitFor(config.waitClick);
   participantes[config.participantPosition].click();
+
+  const iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
+  const position = String(childProcess.execSync(`python3 compare_images.py "${iconText}"`)).trim();
+  if(position === "None") {
+    return
+  }
+  const captchaElem = await page.$(xpaths.captcha);
+
+  console.log(`Get captcha: ${iconText} | Position: ${position}`);
+  const x = config.captchaIndividualSize * position + config.captchaCenter;
+  await page.waitFor(config.waitClick);
+  await clickOnElement(page, captchaElem, x, config.captchaCenter);
+  await page.waitFor(config.waitClick);
+
+  try {
+    const captchaError = document.getElementsByClassName(xpaths.captchaErrorMsg)[0].innerHTML;
+    console.log('Captcha Response:', captchaError)
+  } catch {
+    // Vote computed!
+  }
+
+  await revote(page)(voteParticipant);
 }
 
 let voteCounter = 0;
@@ -58,31 +91,13 @@ const handleCaptcha = (page) => async (response) => {
   ) {
     voteCounter++;
     console.log("Votos computados: " + voteCounter);
-    await revote(page);
   }
-
-  // TODO: Treat the errors
-  // if(hookUrl.starts)globoesporte.globo.com
 
   if (hookUrl.startsWith(links.captchaURL)) {
     const res = await response.json();
     const { symbol: icon, image } = res.data;
-    fs.writeFileSync(`images/${icon}.png`, image, "base64");
-    const position = String(childProcess.execSync(`python3 compare_images.py "${icon}"`)).trim();
-    const captchaElem = await page.$(xpaths.captcha);
-
-    console.log(`Get captcha: ${icon} | Position: ${position}`);
-
-    if(position === "None") {
-      console.log('Doesn\'t recognize image, reloading the captcha.');
-      reloadCaptcha(page);
-      return;
-    }
-
-    const x = config.captchaIndividualSize * position + config.captchaCenter;
-
-    await page.waitFor(config.waitClick);
-    await clickOnElement(page, captchaElem, x, config.captchaCenter);
+    console.log('Download captcha from URL:', icon);
+    fs.writeFile(`images/${icon}.png`, image, "base64", (err) => {});
   }
 }
 

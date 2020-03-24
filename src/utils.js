@@ -29,7 +29,8 @@ const clickOnElement = async (page, elem, x = null, y = null) => {
   await page.mouse.click(rect.left + _x, rect.top + _y);
 };
 
-const revote = async (page) => {
+const revote = (page) => async (callback) => {
+  console.log('Revoting!');
   await page.waitFor(3000);
   await page.waitForXPath(xpaths.finishText).then(async () => {
     const retryBtn = await page.$x(xpaths.finishButton);
@@ -51,6 +52,7 @@ const revote = async (page) => {
         setTimeout(() => {
           refreshBtn.click();
           scrollToTop(page);
+          callback(page);
         }, 200);
       }, 1000);
     }, 750);
@@ -58,8 +60,8 @@ const revote = async (page) => {
 };
 
 
-const removeSponsor = async page => {
-  await page.evaluate(_ => {
+const removeSponsor = async (page) => {
+  await page.evaluate((_) => {
     var style = document.createElement('style');
     style.type = 'text/css';
     style.innerHTML =
@@ -69,8 +71,14 @@ const removeSponsor = async page => {
 };
 
 
+const getTextFromSelector = (page) => async (selector) => {
+  const element = await page.waitFor(selector);
+  return await page.evaluate((element) => element.innerText, element);
+}
+
 module.exports = {
   clickOnElement,
+  getTextFromSelector,
   scrollToTop,
   revote,
   removeSponsor,
