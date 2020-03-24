@@ -9,6 +9,15 @@ const xpaths = {
   captcha: 'img[class="gc__3_EfD"]',
   voteAgain: '[class="_3viry_vXUhTU4nSnvn2iB_"]',
   reloadCaptcha: 'button[class="gc__1JSqe"]',
+  user: "/html/body/div[2]/div[4]/div/div[1]/div[4]/div[2]/div",
+  buttonCaptcha:
+    "/html/body/div[2]/div[4]/div/div[1]/div[4]/div[2]/div[2]/div/div/div[3]/button",
+  imgCaptcha:
+    "/html/body/div[2]/div[4]/div/div[1]/div[4]/div[2]/div[2]/div/div/div[2]/div/div[2]/img",
+  finishButton:
+    "/html/body/div[2]/div[4]/div/div[3]/div/div/div[1]/div[2]/button",
+  finishText:
+    "/html/body/div[2]/div[4]/div/div[3]/div/div/div[1]/div[1]/div[1]/span[1]",
 };
 
 const credentials = {
@@ -20,7 +29,7 @@ const config = {
   participantPosition: 0,  // [0,1,2] are the possible options.
   timeoutClick: 5 * 1000,  // in MS
   waitClick: 2 * 1000, // in milisseconds
-  captchaY: 40,
+  captchaCenter: 30,
   captchaIndividualSize: 53,
 };
 

@@ -2,23 +2,9 @@ const puppeteer = require('puppeteer');
 const { links, credentials, xpaths, config } = require("./config");
 const { installMouseHelper } = require("./mouseHelper");
 const fs = require("fs");
+const { clickOnElement, scrollToTop, revote, removeSponsor } = require('./utils.js');
 const childProcess = require('child_process');
 
-
-// Clicks on an element at position x,y
-const clickOnElement = async (page, elem, x = null, y = null) => {
-  const rect = await page.evaluate(el => {
-      const { top, left, width, height } = el.getBoundingClientRect();
-      return { top, left, width, height };
-  }, elem);
-
-  // // Use given position or default to center
-  const _x = x !== null ? x : rect.width / 2;
-  const _y = y !== null ? y : rect.height / 2;
-  console.log('x', x, 'y', y);
-
-  await page.mouse.click(rect.left + _x, rect.top + _y);
-}
 
 const login = async (page) => {
   page.goto(links.globoLoginURL);
@@ -32,62 +18,70 @@ const login = async (page) => {
   console.log('Logged in.');
 }
 
-const goToVotePage = async (page) => {
-  await page.goto(links.voteURL, {
-    // waitUntil: "networkidle2"
-  });
 
-  console.log('All resources loaded.');
+const goToVotePage = async (page) => {
+  await page.goto(links.voteURL);
+  await removeSponsor(page);
   voteParticipant(page);
 }
 
+
 const reloadCaptcha = async (page) => {
-  console.log('Reload Captcha.')
+  console.log('Reload Captcha.');
   await page.click(xpaths.reloadCaptcha)
 }
 
-const voteAgain = async (page) => {
-  // TODO: Fix this function
-  console.log('Vote Again.')
-  await page.waitForSelector(xpaths.voteAgain, {visible: true});
-  // setTimeout(async () => {
-  // await page.click(xpaths.voteAgain);
-  // await page.waitFor(2000);
-  voteParticipant(page);
-  // }, config.waitClick)
-}
 
 const voteParticipant = async (page) => {
-  console.log('Vote participant.')
+  console.log('Vote participant.');
+  scrollToTop(page);
   const participantes = await page.$$(xpaths.participants);
 
-  setTimeout(() => {
+  try {
+    await page.waitFor(config.waitClick);
     participantes[config.participantPosition].click();
-  }, config.waitClick);
-
-  console.log('Clicked on participant box.');
+  } catch {
+  }
 }
+
+let voteCounter = 0;
 
 const handleCaptcha = (page) => async (response) => {
   const hookUrl = response.url();
+  const statusCode = response.status();
+
+  if (hookUrl.startsWith(links.challengeAccepted) &&
+    parseInt(statusCode) === 200 &&
+    request.method() === "POST"
+  ) {
+    voteCounter++;
+    console.log("Votos computados: " + voteCounter);
+    await revote(page);
+  }
   if (hookUrl.startsWith(links.captchaURL)) {
     let res = await response.json();
     let { symbol: icon, image } = res.data;
-    console.log('Got captcha!', icon);
     fs.writeFileSync(`images/${icon}.png`, image, "base64");
     const position = String(childProcess.execSync(`python3 compare_images.py "${icon}"`)).trim();
     const captchaElem = await page.$(xpaths.captcha);
 
-    console.log('Get captcha position:', position)
+    console.log('Got captcha!', icon);
+    console.log('Get captcha position:', position);
+
     if(position === "None") {
-        reloadCaptcha(page);
-        return;
+      console.log('Doesn\'t recognize image, reloading the captcha.')
+      reloadCaptcha(page);
+      return;
     }
 
-    const x = config.captchaIndividualSize * position + 20;
+    const x = config.captchaCenter * position + config.captchaCenter;
     setTimeout(async () => {
-      await clickOnElement(page, captchaElem, x, config.captchaY);
-      await voteAgain(page);
+      await clickOnElement(page, captchaElem, x, config.captchaCenter);
+      try {
+        await revote(page);
+      } catch {
+
+      }
     }, config.waitClick)
 
   }
