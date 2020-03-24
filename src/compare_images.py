@@ -33,8 +33,14 @@ def compare_image(image1, image2):
 
 
 if __name__ == '__main__':
-    target = 'meia'
-    image = Image.open('./images/meia.png')
+    try:
+        target = sys.argv[1]
+    except IndexError:
+        print('You need to specify a target')
+        print('python3 compare_images.py <icon-name>')
+        sys.exit()
+
+    image = Image.open('./images/'+target+'.png')
     matched_diff = sys.maxsize
     match = ''
     match_pos = None
@@ -51,5 +57,5 @@ if __name__ == '__main__':
                 match = existent_image_path
                 match_pos = i
 
-    print(matched_diff, match, match_pos)
+    # print(matched_diff, match, match_pos)
     print(match_pos)

@@ -5,7 +5,10 @@ const links = {
 };
 
 const xpaths = {
-  classNameParticipants: '[class="HkYyhPWbPFN45MEcUG6p8"]',
+  participants: '[class="HkYyhPWbPFN45MEcUG6p8"]',
+  captcha: 'img[class="gc__3_EfD"]',
+  voteAgain: '[class="_3viry_vXUhTU4nSnvn2iB_"]',
+  reloadCaptcha: 'button[class="gc__1JSqe"]',
 };
 
 const credentials = {
@@ -15,7 +18,10 @@ const credentials = {
 
 const config = {
   participantPosition: 0,  // [0,1,2] are the possible options.
-  timeoutClick: 1 * 1000,  // in MS
+  timeoutClick: 5 * 1000,  // in MS
+  waitClick: 2 * 1000, // in milisseconds
+  captchaY: 40,
+  captchaIndividualSize: 53,
 };
 
 module.exports = { config, credentials, links, xpaths };
