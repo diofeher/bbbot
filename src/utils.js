@@ -12,7 +12,7 @@ const clickXPath = async (page, xpath) => {
   let handler = await page.$x(xpath);
   setTimeout(() => {
     handler[0].click();
-  }, 1000);
+  }, config.waitClick);
 };
 
 
@@ -25,38 +25,36 @@ const clickOnElement = async (page, elem, x = null, y = null) => {
   // // Use given position or default to center
   const _x = x !== null ? x : rect.width / 2;
   const _y = y !== null ? y : rect.height / 2;
-  console.log('x', x, 'y', y);
 
   await page.mouse.click(rect.left + _x, rect.top + _y);
 };
 
 const revote = async (page) => {
-  setTimeout(async () => {
-    await page.waitForXPath(xpaths.finishText).then(async () => {
-      const retryBtn = await page.$x(xpaths.finishButton);
+  await page.waitFor(3000);
+  await page.waitForXPath(xpaths.finishText).then(async () => {
+    const retryBtn = await page.$x(xpaths.finishButton);
+    retryBtn[0].click();
+    setTimeout(async () => {
       retryBtn[0].click();
+    }, 500);
+    setTimeout(async () => {
+      await scrollToTop(page);
       setTimeout(async () => {
-        retryBtn[0].click();
-      }, 500);
+        await clickXPath(page, xpaths.user);
+      }, 1000);
       setTimeout(async () => {
-        await scrollToTop(page);
-        setTimeout(async () => {
-          await clickXPath(page, xpaths.user);
-        }, 1000);
-        setTimeout(async () => {
-          await clickXPath(page, xpaths.user);
-          const refreshBtn = await page.waitForXPath(
-            xpaths.buttonCaptcha
-          );
+        await clickXPath(page, xpaths.user);
+        const refreshBtn = await page.waitForXPath(
+          xpaths.buttonCaptcha
+        );
+        refreshBtn.click();
+        setTimeout(() => {
           refreshBtn.click();
-          setTimeout(() => {
-            refreshBtn.click();
-            scrollToTop(page);
-          }, 200);
-        }, 1000);
-      }, 750);
-    });
-  }, 3000);
+          scrollToTop(page);
+        }, 200);
+      }, 1000);
+    }, 750);
+  });
 };
 
 

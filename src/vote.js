@@ -37,53 +37,49 @@ const voteParticipant = async (page) => {
   scrollToTop(page);
   const participantes = await page.$$(xpaths.participants);
 
-  try {
-    await page.waitFor(config.waitClick);
-    participantes[config.participantPosition].click();
-  } catch {
-  }
+  await page.waitFor(config.waitClick);
+  participantes[config.participantPosition].click();
 }
 
 let voteCounter = 0;
 
 const handleCaptcha = (page) => async (response) => {
-  const hookUrl = response.url();
-  const statusCode = response.status();
+  try {
+    const hookUrl = response.url();
+    const statusCode = response.status();
+    const request = response.request();
 
-  if (hookUrl.startsWith(links.challengeAccepted) &&
-    parseInt(statusCode) === 200 &&
-    request.method() === "POST"
-  ) {
-    voteCounter++;
-    console.log("Votos computados: " + voteCounter);
-    await revote(page);
-  }
-
-  if (hookUrl.startsWith(links.captchaURL)) {
-    let res = await response.json();
-    let { symbol: icon, image } = res.data;
-    fs.writeFileSync(`images/${icon}.png`, image, "base64");
-    const position = String(childProcess.execSync(`python3 compare_images.py "${icon}"`)).trim();
-    const captchaElem = await page.$(xpaths.captcha);
-
-    console.log('Got captcha!', icon);
-    console.log('Get captcha position:', position);
-
-    if(position === "None") {
-      console.log('Doesn\'t recognize image, reloading the captcha.')
-      reloadCaptcha(page);
-      return;
+    if (hookUrl.startsWith(links.challengeAcceptedURL) &&
+      parseInt(statusCode) === 200 &&
+      request.method() === "POST"
+    ) {
+      voteCounter++;
+      console.log("Votos computados: " + voteCounter);
+      await revote(page);
     }
 
-    const x = config.captchaIndividualSize * position + config.captchaCenter;
-    setTimeout(async () => {
-      await clickOnElement(page, captchaElem, x, config.captchaCenter);
-      try {
-        await revote(page);
-      } catch {
+    if (hookUrl.startsWith(links.captchaURL)) {
+      const res = await response.json();
+      const { symbol: icon, image } = res.data;
+      fs.writeFileSync(`images/${icon}.png`, image, "base64");
+      const position = String(childProcess.execSync(`python3 compare_images.py "${icon}"`)).trim();
+      const captchaElem = await page.$(xpaths.captcha);
 
+      console.log(`Get captcha: ${icon} | Position: ${position}`);
+
+      if(position === "None") {
+        console.log('Doesn\'t recognize image, reloading the captcha.');
+        reloadCaptcha(page);
+        return;
       }
-    }, config.waitClick)
+
+      const x = config.captchaIndividualSize * position + config.captchaCenter;
+
+      await clickOnElement(page, captchaElem, x, config.captchaCenter);
+      await page.waitFor(config.waitClick);
+      await revote(page);
+    }
+  } catch {
 
   }
 }
@@ -97,7 +93,6 @@ const handleCaptcha = (page) => async (response) => {
 
     const page = await browser.newPage();
     await installMouseHelper(page);
-
     await login(page);
     await goToVotePage(page);
 
