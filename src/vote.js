@@ -53,7 +53,7 @@ const voteParticipant = async (page) => {
   const participantes = await page.$$(xpaths.participants);
 
   await page.waitFor(config.waitClick);
-  participantes[config.participantPosition].click();
+  participantes[config.participantPosition - 1].click();
 
   const iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
   const position = String(childProcess.execSync(`python3 compare_images.py "${iconText}"`)).trim();

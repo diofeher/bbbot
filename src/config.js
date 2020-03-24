@@ -7,7 +7,7 @@ const links = {
 };
 
 const config = {
-  participantPosition: 0,  // [0,1,2] are the possible options.
+  participantPosition: process.env.PARTICIPANTE || 1,  // [1,2, 3] are the possible options.
   timeoutClick: 5 * 1000,  // in MS
   waitClick: 2 * 1000, // in milisseconds
   captchaCenter: 30,
@@ -15,7 +15,7 @@ const config = {
 };
 
 BASE_XPATH = "/html/body/div[2]/div[4]/div";
-USER_XPATH = `${BASE_XPATH}/div[1]/div[4]/div[${config.participantPosition + 1}]`;
+USER_XPATH = `${BASE_XPATH}/div[1]/div[4]/div[${config.participantPosition}]`;
 
 const xpaths = {
   participants: '[class="HkYyhPWbPFN45MEcUG6p8"]',
