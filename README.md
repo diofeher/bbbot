@@ -9,10 +9,20 @@ Mari - 3
 
 Você precisa exportar duas variáveis para poder logar no site da Globo e uma para o participante que vai ser votado:
 
+Linux / Mac
+
 ```
 export GLOBO_USERNAME='your-email@globo.com'
 export GLOBO_PASSWORD='xxxxxxxxx'
 export PARTICIPANTE=3
+```
+
+Windows PowerShell
+
+```
+$env:GLOBO_USERNAME='your-email@globo.com'
+$env:GLOBO_PASSWORD='xxxxxxxxx'
+$env:PARTICIPANTE=3
 ```
 
 PARTICIPANTE se refere à posição do participante. Caso ele seja o primeiro da lista, colocar um 1,
