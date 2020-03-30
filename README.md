@@ -29,7 +29,7 @@ INSTALAÇÃO NO WINDOWS
 5) Caso o bot dê problema, tente votar manualmente primeiro com sua conta só pra depois tentar utilizar o bot.
 
 INSTALAÇÃO EM MAC E LINUX
-==============
+=========================
 
 Instale o Python3 e o Node.JS
 
@@ -45,6 +45,16 @@ Rodando o bot:
 ```
 npm start
 ```
+
+TREINAMENTO DO ALGORITMO
+========================
+
+Esse bot é feito utilizando o SIFT do OpenCV. Algumas captchas não vão funcionar corretamente pois não temos todas as imagens do banco. Para ajudar nesse mapeamento, faça o seguinte:
+
+1) Ele vai baixar um captcha com um nome. Esse arquivo vai ser salvo em `images/<simbolo>.png`
+2) O programa vai cortar o captcha em 5 pedaços e renomear cada pra: images/<simbolo>_numero.png
+3) É só puxar a versão correta pra images_individual como <simbolo>_numero.png que o programa vai identificar esse ícone
+4) Abra um pull request para atualizarmos aqui :)
 
 TODO
 =====
