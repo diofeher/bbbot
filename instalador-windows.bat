@@ -1,2 +1,2 @@
 npm install
-pip3 install -r requirements-windows.txt
+pip3 install -r requirements.txt
