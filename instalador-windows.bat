@@ -1,2 +1,4 @@
-npm install
-pip3 install -r requirements.txt
+call npm install
+call pip install -r requirements.txt
+
+pause
