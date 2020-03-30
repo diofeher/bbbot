@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
-from utils import list_individual_images, break_captcha
+from utils import list_individual_images, break_captcha, remove_accents
 import sys
 
 
@@ -41,15 +41,16 @@ if __name__ == '__main__':
         print('python3 compare_images.py <icon-name>')
         sys.exit()
 
-    image = Image.open('./images/'+target+'.png')
+    image_png = Image.open('./images/'+target+'.png')
     matched_diff = sys.maxsize
     match = ''
     match_pos = None
 
-    for i, (captcha_name, captcha_image) in enumerate(break_captcha(READ_CAPTCHA_PATH, target, image)):
+    for i, (captcha_name, captcha_image) in enumerate(break_captcha(READ_CAPTCHA_PATH, target, image_png)):
         for name, image in list_individual_images(PATH_EXISTENT):
-            if target not in name:
+            if remove_accents(target) not in remove_accents(name):
                 continue
+            print(target, name, target in name)
             captcha_part = READ_CAPTCHA_PATH + captcha_name + '_' + str(i) + '.png'
             existent_image_path = PATH_EXISTENT + name
             diff = compare_image(existent_image_path, captcha_part)

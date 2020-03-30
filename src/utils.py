@@ -1,5 +1,8 @@
 import os
 from PIL import Image
+import string
+import unicodedata
+
 
 SIZE = 5
 
@@ -31,3 +34,7 @@ def break_captcha(path, icon_name, image):
         image_icon = image.crop(coords)
         save_candidate_name(path, image_icon, icon_name, i)
         yield icon_name, image_icon
+
+
+def remove_accents(data):
+    return ''.join(x for x in unicodedata.normalize('NFKD', data) if x in string.ascii_letters).lower()
