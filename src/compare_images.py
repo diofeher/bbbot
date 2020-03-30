@@ -50,7 +50,6 @@ if __name__ == '__main__':
         for name, image in list_individual_images(PATH_EXISTENT):
             if remove_accents(target) not in remove_accents(name):
                 continue
-            print(target, name, target in name)
             captcha_part = READ_CAPTCHA_PATH + captcha_name + '_' + str(i) + '.png'
             existent_image_path = PATH_EXISTENT + name
             diff = compare_image(existent_image_path, captcha_part)

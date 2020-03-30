@@ -56,7 +56,7 @@ const voteParticipant = async (page) => {
   participantes[config.participantPosition - 1].click();
 
   const iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
-  const position = String(childProcess.execSync(`python3 compare_images.py "${iconText}"`)).trim();
+  const position = String(childProcess.execSync(`python compare_images.py "${iconText}"`)).trim();
   if(position === "None") {
     return
   }
