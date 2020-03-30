@@ -14,7 +14,7 @@ def save_tmp_name(image, icon_name, count):
 
 def list_individual_images(path):
     for f in os.listdir(path):
-        if f == ".DS_Store":
+        if f in [".DS_Store", ".gitkeep"]:
             continue
         filename = path + f
         image = Image.open(filename)

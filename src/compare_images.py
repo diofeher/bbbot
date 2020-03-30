@@ -12,7 +12,7 @@ PATH_EXISTENT = './images_individual/'
 def calculate_diff(img1, img2):
     matcher = cv2.xfeatures2d.SIFT_create(nfeatures=100)
     # surf = cv2.xfeatures2d.SURF_create()
-    # matcher = cv2.ORB_create()
+    # matcher = cv2.ORB_create(edgeThreshold=1)
     # find the keypoints and descriptors with SIFT
     kp1, des1 = matcher.detectAndCompute(img1,None)
     kp2, des2 = matcher.detectAndCompute(img2,None)
