@@ -1,4 +1,5 @@
 const { xpaths, config } = require("./config");
+const childProcess = require('child_process');
 
 
 const scrollToTop = async (page) => {
@@ -71,15 +72,32 @@ const removeSponsor = async (page) => {
 };
 
 
+const handleIconName = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").lower()
+
+
 const getTextFromSelector = (page) => async (selector) => {
   const element = await page.waitFor(selector);
   return await page.evaluate((element) => element.innerText, element);
 }
 
+
+const getPythonInstallation = () => {
+  try {
+    childProcess.execSync(`python3 -c "print(1)"`);
+    return 'python3';
+  } catch {
+    return 'python';
+  }
+}
+
+
 module.exports = {
+  clickXPath,
   clickOnElement,
+  getPythonInstallation,
   getTextFromSelector,
   scrollToTop,
   revote,
+  handleIconName,
   removeSponsor,
 }

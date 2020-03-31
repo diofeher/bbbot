@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
-from utils import list_individual_images, break_captcha, remove_accents
+from utils import list_individual_images, break_captcha, handle_name
 import sys
 
 
@@ -35,7 +35,7 @@ def compare_image(image1, image2):
 
 if __name__ == '__main__':
     try:
-        target = sys.argv[1]
+        target = handle_name(sys.argv[1]).lower()
     except IndexError:
         print('You need to specify a target')
         print('python3 compare_images.py <icon-name>')
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     for i, (captcha_name, captcha_image) in enumerate(break_captcha(READ_CAPTCHA_PATH, target, image_png)):
         for name, image in list_individual_images(PATH_EXISTENT):
-            if remove_accents(target) not in remove_accents(name):
+            if target not in remove_accents(name):
                 continue
             captcha_part = READ_CAPTCHA_PATH + captcha_name + '_' + str(i) + '.png'
             existent_image_path = PATH_EXISTENT + name

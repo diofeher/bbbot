@@ -10,12 +10,16 @@ const { installMouseHelper } = require("./mouseHelper");
 const fs = require("fs");
 const {
   clickOnElement,
+  clickXPath,
   getTextFromSelector,
   scrollToTop,
   revote,
+  getPythonInstallation,
   removeSponsor
 } = require('./utils.js');
 const childProcess = require('child_process');
+
+const PYTHON_CMD = getPythonInstallation();
 
 
 const login = async (page) => {
@@ -50,13 +54,12 @@ const reloadCaptcha = async (page) => {
 
 const voteParticipant = async (page) => {
   scrollToTop(page);
-  const participantes = await page.$$(xpaths.participants);
-
-  await page.waitFor(config.waitClick);
-  participantes[config.participantPosition - 1].click();
+  console.log('xpaths', xpaths.user)
+  clickXPath(page, xpaths.user);
 
   const iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
-  const position = String(childProcess.execSync(`python compare_images.py "${iconText}"`)).trim();
+  const position = String(childProcess.execSync(`${PYTHON_CMD} compare_images.py "${iconText}"`)).trim();
+  console.log(position)
   if(position === "None") {
     return
   }
@@ -97,7 +100,7 @@ const handleCaptcha = (page) => async (response) => {
     const res = await response.json();
     const { symbol: icon, image } = res.data;
     console.log('Download captcha from URL:', icon);
-    fs.writeFile(`images/${icon}.png`, image, "base64", (err) => {});
+    fs.writeFile(`images/${handleIconName(icon)}.png`, image, "base64", (err) => {});
   }
 }
 

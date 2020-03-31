@@ -49,6 +49,8 @@ pip3 install -r requirements.txt
 npm install
 ```
 
+Normalmente o Python2 já vem instalado nessas máquinas, então você precisa instalar o Python3 e ficar com as duas instalações.
+
 Rodando o bot:
 
 ```

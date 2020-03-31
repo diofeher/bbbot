@@ -8,11 +8,11 @@ SIZE = 5
 
 
 def save_candidate_name(path, image, icon_name, count):
-    image.save(path + icon_name + '_' + str(count) + '.png')
+    image.save(path + handle_name(icon_name) + '_' + str(count) + '.png')
 
 
 def save_tmp_name(image, icon_name, count):
-    image.save('images_tmp/'+icon_name + '_' + str(count) + '.png')
+    image.save('images_tmp/' + handle_name(icon_name) + '_' + str(count) + '.png')
 
 
 def list_individual_images(path):
@@ -36,5 +36,5 @@ def break_captcha(path, icon_name, image):
         yield icon_name, image_icon
 
 
-def remove_accents(data):
+def handle_name(data):
     return ''.join(x for x in unicodedata.normalize('NFKD', data) if x in string.ascii_letters).lower()
