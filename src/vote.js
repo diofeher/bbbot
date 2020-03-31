@@ -64,7 +64,7 @@ const voteParticipant = async (page) => {
 
   if(position === "None") {
     while (position === "None") {
-      reloadCaptcha();
+      reloadCaptcha(page);
       iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
       position = runOpenCV(iconText)
     }
