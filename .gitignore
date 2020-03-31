@@ -5,3 +5,4 @@ src/images/*
 !src/images/.gitkeep
 src/images_tmp/*
 !src/images_tmp/.gitkeep
+.idea/
