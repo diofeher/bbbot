@@ -66,6 +66,7 @@ const voteParticipant = async (page) => {
   if(position === "None") {
     while (position === "None") {
       reloadCaptcha(page);
+      await page.waitFor(config.waitClick);
       iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
       position = runOpenCV(iconText)
       console.log(`Get captcha: ${iconText} | Position: ${position}`);
@@ -122,12 +123,17 @@ const handleCaptcha = (page) => async (response) => {
     const browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
         headless: false,
+        timeout: 10000,
     });
 
     const page = await browser.newPage();
-    await installMouseHelper(page);
-    await login(page);
-    await goToVotePage(page);
+    try {
+      await installMouseHelper(page);
+      await login(page);
+      await goToVotePage(page);
+    } catch {
+      await goToVotePage(page);
+    }
 
     page.on("response", handleCaptcha(page));
 })();
