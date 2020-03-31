@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     for i, (captcha_name, captcha_image) in enumerate(break_captcha(READ_CAPTCHA_PATH, target, image_png)):
         for name, image in list_individual_images(PATH_EXISTENT):
-            if target not in remove_accents(name):
+            if target not in handle_name(name):
                 continue
             captcha_part = READ_CAPTCHA_PATH + captcha_name + '_' + str(i) + '.png'
             existent_image_path = PATH_EXISTENT + name

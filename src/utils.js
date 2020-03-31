@@ -72,7 +72,7 @@ const removeSponsor = async (page) => {
 };
 
 
-const handleIconName = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").lower()
+const handleIconName = (text) => text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
 
 const getTextFromSelector = (page) => async (selector) => {

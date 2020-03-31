@@ -14,6 +14,7 @@ const {
   getTextFromSelector,
   scrollToTop,
   revote,
+  handleIconName,
   getPythonInstallation,
   removeSponsor
 } = require('./utils.js');
@@ -36,6 +37,8 @@ const login = async (page) => {
   console.log('Logged in.');
 }
 
+const runOpenCV = (iconText) => String(childProcess.execSync(`${PYTHON_CMD} compare_images.py "${iconText}"`)).trim();
+
 
 const goToVotePage = async (page) => {
   await page.goto(links.voteURL, {
@@ -47,21 +50,24 @@ const goToVotePage = async (page) => {
 
 
 const reloadCaptcha = async (page) => {
-  console.log('Reload Captcha.');
-  await page.click(xpaths.reloadCaptcha)
+  console.log('Reload Captcha.', xpaths.reloadCaptcha);
+  clickXPath(xpaths.reloadCaptcha);
 }
 
 
 const voteParticipant = async (page) => {
   scrollToTop(page);
-  console.log('xpaths', xpaths.user)
   clickXPath(page, xpaths.user);
 
-  const iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
-  const position = String(childProcess.execSync(`${PYTHON_CMD} compare_images.py "${iconText}"`)).trim();
-  console.log(position)
+  let iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
+  let position = runOpenCV(iconText)
+
   if(position === "None") {
-    return
+    while (position === "None") {
+      reloadCaptcha();
+      iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
+      position = runOpenCV(iconText)
+    }
   }
   const captchaElem = await page.$(xpaths.captcha);
 

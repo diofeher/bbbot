@@ -36,5 +36,7 @@ def break_captcha(path, icon_name, image):
         yield icon_name, image_icon
 
 
+chars = string.ascii_letters + ' '
+
 def handle_name(data):
-    return ''.join(x for x in unicodedata.normalize('NFKD', data) if x in string.ascii_letters).lower()
+    return ''.join(x for x in unicodedata.normalize('NFKD', data) if x in chars).lower()
