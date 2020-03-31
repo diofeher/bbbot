@@ -61,17 +61,19 @@ const voteParticipant = async (page) => {
 
   let iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
   let position = runOpenCV(iconText)
+  console.log('First Captcha:', iconText, position);
 
   if(position === "None") {
     while (position === "None") {
       reloadCaptcha(page);
       iconText = await getTextFromSelector(page)(xpaths.captchaTextClassName);
       position = runOpenCV(iconText)
+      console.log(`Get captcha: ${iconText} | Position: ${position}`);
     }
   }
-  const captchaElem = await page.$(xpaths.captcha);
 
-  console.log(`Get captcha: ${iconText} | Position: ${position}`);
+  console.log('Pegando captcha.')
+  const captchaElem = await page.$(xpaths.captcha);
   const x = config.captchaIndividualSize * position + config.captchaCenter;
   await page.waitFor(config.waitClick);
   await clickOnElement(page, captchaElem, x, config.captchaCenter);

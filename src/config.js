@@ -20,7 +20,8 @@ USER_XPATH = `${BASE_XPATH}/div[1]/div[4]/div[${config.participantPosition}]`;
 const xpaths = {
   captcha: 'img[class="gc__3_EfD"]',
   voteAgain: '[class="_3viry_vXUhTU4nSnvn2iB_"]',
-  reloadCaptcha: `${USER_XPATH}/div[4]/div[2]/div[2]/div/div/div/button`,
+  reloadCaptcha: `${USER_XPATH}/div[2]/div/div/div/button`,
+
   captchaTextClassName: '.gc__2e8f-',
   captchaErrorMsg: '.gc__2b3Aq',
   user: USER_XPATH,
